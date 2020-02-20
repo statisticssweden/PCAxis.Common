@@ -18,8 +18,8 @@
         Public Function Execute(lhs As PXModel, rhs As Object) As PXModel Implements IPXOperation.Execute
             Dim piv As PCAxis.Paxiom.Operations.Pivot = New PCAxis.Paxiom.Operations.Pivot()
 
-            Dim q = From v In lhs.Meta.Variables _
-                Select New PivotDescription(v.Name, CType(IIf(v.IsTime, PlacementType.Heading, PlacementType.Stub), PlacementType))
+            Dim q = From v In lhs.Meta.Variables
+                    Select New PivotDescription(v.Name, CType(If(v.IsTime, PlacementType.Heading, PlacementType.Stub), PlacementType))
 
             Return piv.Execute(lhs, q.ToArray())
 

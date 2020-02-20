@@ -108,7 +108,7 @@ Namespace PCAxis.Paxiom.Operations
             'Set precision on new value to same as highest precision in the sumvariables
             Dim precision As Integer = 0
             Dim newVal As Paxiom.Value = newsumVar.Values.GetByCode(rhs.NewValueCode)
-            If Not IsNothing(newVal) Then
+            If Not newVal Is Nothing Then
                 For Each sumValue As Paxiom.Value In newsumVar.Values
                     If sumValue.Precision > precision Then
                         precision = sumValue.Precision

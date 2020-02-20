@@ -417,21 +417,21 @@ Namespace PCAxis.Paxiom
 
                 Select Case value
                     Case PXConstant.DATASYMBOL_1
-                        strValue = DirectCast(IIf(_model.Meta.DataSymbol1 Is Nothing, PXConstant.DATASYMBOL_1_STRING, _model.Meta.DataSymbol1), String)
+                        strValue = DirectCast(If(_model.Meta.DataSymbol1 Is Nothing, PXConstant.DATASYMBOL_1_STRING, _model.Meta.DataSymbol1), String)
                     Case PXConstant.DATASYMBOL_2
-                        strValue = DirectCast(IIf(_model.Meta.DataSymbol2 Is Nothing, PXConstant.DATASYMBOL_2_STRING, _model.Meta.DataSymbol2), String)
+                        strValue = DirectCast(If(_model.Meta.DataSymbol2 Is Nothing, PXConstant.DATASYMBOL_2_STRING, _model.Meta.DataSymbol2), String)
                     Case PXConstant.DATASYMBOL_3
-                        strValue = DirectCast(IIf(_model.Meta.DataSymbol3 Is Nothing, PXConstant.DATASYMBOL_3_STRING, _model.Meta.DataSymbol3), String)
+                        strValue = DirectCast(If(_model.Meta.DataSymbol3 Is Nothing, PXConstant.DATASYMBOL_3_STRING, _model.Meta.DataSymbol3), String)
                     Case PXConstant.DATASYMBOL_4
-                        strValue = DirectCast(IIf(_model.Meta.DataSymbol4 Is Nothing, PXConstant.DATASYMBOL_4_STRING, _model.Meta.DataSymbol4), String)
+                        strValue = DirectCast(If(_model.Meta.DataSymbol4 Is Nothing, PXConstant.DATASYMBOL_4_STRING, _model.Meta.DataSymbol4), String)
                     Case PXConstant.DATASYMBOL_5
-                        strValue = DirectCast(IIf(_model.Meta.DataSymbol5 Is Nothing, PXConstant.DATASYMBOL_5_STRING, _model.Meta.DataSymbol5), String)
+                        strValue = DirectCast(If(_model.Meta.DataSymbol5 Is Nothing, PXConstant.DATASYMBOL_5_STRING, _model.Meta.DataSymbol5), String)
                     Case PXConstant.DATASYMBOL_6
-                        strValue = DirectCast(IIf(_model.Meta.DataSymbol6 Is Nothing, PXConstant.DATASYMBOL_6_STRING, _model.Meta.DataSymbol6), String)
+                        strValue = DirectCast(If(_model.Meta.DataSymbol6 Is Nothing, PXConstant.DATASYMBOL_6_STRING, _model.Meta.DataSymbol6), String)
                     Case PXConstant.DATASYMBOL_7
-                        strValue = DirectCast(IIf(_model.Meta.DataSymbol7 Is Nothing, PXConstant.DATASYMBOL_7_STRING, _model.Meta.DataSymbol7), String)
+                        strValue = DirectCast(If(_model.Meta.DataSymbol7 Is Nothing, PXConstant.DATASYMBOL_7_STRING, _model.Meta.DataSymbol7), String)
                     Case PXConstant.DATASYMBOL_NIL
-                        strValue = DirectCast(IIf(_model.Meta.DataSymbolNIL Is Nothing, PXConstant.DATASYMBOL_NIL_STRING, _model.Meta.DataSymbolNIL), String)
+                        strValue = DirectCast(If(_model.Meta.DataSymbolNIL Is Nothing, PXConstant.DATASYMBOL_NIL_STRING, _model.Meta.DataSymbolNIL), String)
                     Case Else
                         strValue = value.ToString
                 End Select
