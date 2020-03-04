@@ -4,7 +4,7 @@
     <RootNamespace></RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <Version>1.0.0-beta3</Version>
+    <Version>1.0.0-beta4</Version>
     <Description>Common library for the PX plattform. Operations, serializers and enums.</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/statisticssweden/PCAxis.Common</PackageProjectUrl>
@@ -12,20 +12,20 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>PX</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Strong Name Key.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="PCAxis.Core" Version="1.0.0-beta3" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PCAxis.Core" Version="1.0.0-beta4" />
   </ItemGroup>
 
 </Project>
