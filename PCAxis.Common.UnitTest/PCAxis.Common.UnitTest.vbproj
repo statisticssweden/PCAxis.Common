@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <RootNamespace>PCAxis.Common.UnitTest</RootNamespace>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PCAxis.Common\PCAxis.Common.vbproj" />
+    <ProjectReference Include="..\PCAxis.Common\PCAxis.Common.vbproj" />
   </ItemGroup>
 
 </Project>
