@@ -4,7 +4,7 @@
     <RootNamespace></RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <Version>1.0.0-beta5</Version>
+    <Version>1.0.0</Version>
     <Description>Common library for the PX plattform. Operations, serializers and enums.</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/statisticssweden/PCAxis.Common</PackageProjectUrl>
@@ -29,7 +29,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="PCAxis.Core" Version="1.0.0-beta5" />
+    <PackageReference Include="PCAxis.Core" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
