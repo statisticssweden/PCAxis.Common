@@ -20,7 +20,7 @@ Namespace PCAxis.Paxiom
         ''' <param name="wr">The stream to serialize to</param>
         ''' <remarks></remarks>
         Protected Overrides Sub DoSerialize(ByVal model As PXModel, ByVal wr As System.IO.StreamWriter)
-            MyBase.Model = GetPivotedModelAllStub(model)
+            MyBase.Model = PivotUtil.GetPivotedModelAllStub(model)
             WriteTitle(wr)
             WriteHeading(wr)
             WriteTable(wr)
