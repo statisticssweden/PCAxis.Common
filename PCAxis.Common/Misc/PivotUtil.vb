@@ -7,7 +7,7 @@
     Public Class PivotUtil
 
         ''' <summary>
-        ''' Gets the encoding object by the name.
+        ''' Gets the object model pivoted with all variables in stub
         ''' </summary>
         ''' <param name="oldModel">The model to be pivoted</param>
         ''' <returns>pivoted model</returns>
