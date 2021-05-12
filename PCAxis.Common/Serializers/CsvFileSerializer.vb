@@ -18,6 +18,7 @@ Namespace PCAxis.Paxiom
         Private _title As Boolean = False
         Private _thosandSeparator As Boolean = False
         Private _wrapTextWithQuote As Boolean = True
+        Private _useShortDescription As Boolean = False
 #End Region
 
 #Region "Constructors"
@@ -72,8 +73,8 @@ Namespace PCAxis.Paxiom
         ''' <param name="model">The model to serialize</param>
         ''' <param name="wr">The stream to serialize to</param>
         ''' <remarks></remarks>
-        Private Sub DoSerialize(ByVal model As PXModel, ByVal wr As System.IO.StreamWriter)
-            _model = model
+        Protected Overridable Sub DoSerialize(ByVal model As PXModel, ByVal wr As System.IO.StreamWriter)
+            Me.Model = model
             WriteTitle(wr)
             WriteHeading(wr)
             WriteTable(wr)
@@ -84,10 +85,10 @@ Namespace PCAxis.Paxiom
         ''' </summary>
         ''' <param name="wr">The stream to write to</param>
         ''' <remarks></remarks>
-        Private Sub WriteTitle(ByVal wr As System.IO.StreamWriter)
+        Protected Sub WriteTitle(ByVal wr As System.IO.StreamWriter)
             If Me.Title = True Then
                 If Me.WrapTextWithQuote Then wr.Write(ControlChars.Quote)
-                wr.Write(Util.GetModelTitle(_model))
+                wr.Write(Util.GetModelTitle(Model))
                 If Me.WrapTextWithQuote Then wr.WriteLine(ControlChars.Quote)
                 wr.WriteLine()
             End If
@@ -98,28 +99,32 @@ Namespace PCAxis.Paxiom
         ''' </summary>
         ''' <param name="wr">A StreamWriter that encapsulates the stream</param>
         ''' <remarks></remarks>
-        Private Sub WriteHeading(ByVal wr As System.IO.StreamWriter)
+        Protected Sub WriteHeading(ByVal wr As System.IO.StreamWriter)
             ' Write stub variable names 
-            For i As Integer = 0 To _model.Meta.Stub.Count - 1
+            For i As Integer = 0 To Model.Meta.Stub.Count - 1
                 If i > 0 Then
                     wr.Write(Me.Delimiter)
                 End If
 
                 If Me.DoubleColumn Then
-                    If _model.Meta.Stub(i).DoubleColumn Then
+                    If Model.Meta.Stub(i).DoubleColumn Then
                         If Me.WrapTextWithQuote Then wr.Write(ControlChars.Quote)
-                        wr.Write(_model.Meta.Stub(i).Code)
+                        wr.Write(Model.Meta.Stub(i).Code)
                         If Me.WrapTextWithQuote Then wr.Write(ControlChars.Quote)
                         wr.Write(Me.Delimiter)
                     End If
                 End If
                 If Me.WrapTextWithQuote Then wr.Write(ControlChars.Quote)
-                wr.Write(_model.Meta.Stub(i).Name)
+                If Not UseShortDescription Then
+                    wr.Write(Model.Meta.Stub(i).Name)
+                Else
+                    wr.Write(Model.Meta.Stub(i).Code)
+                End If
                 If Me.WrapTextWithQuote Then wr.Write(ControlChars.Quote)
             Next
 
             'Write concatenated heading variable values
-            If _model.Meta.Heading.Count > 0 Then
+            If Model.Meta.Heading.Count > 0 Then
                 Dim sc As StringCollection
 
                 wr.Write(Me.Delimiter)
@@ -140,7 +145,15 @@ Namespace PCAxis.Paxiom
 
                 'Add header for the value column
                 wr.Write(Me.Delimiter)
-                wr.Write(_model.Meta.Contents)
+                If Me.WrapTextWithQuote Then wr.Write(ControlChars.Quote)
+
+                If Not UseShortDescription Then
+                    wr.Write(Model.Meta.Contents)
+                Else
+                    wr.Write(Model.Meta.TableID)
+                End If
+
+                If Me.WrapTextWithQuote Then wr.Write(ControlChars.Quote)
                 'We still need a new line
                 wr.WriteLine()
             End If
@@ -157,17 +170,17 @@ Namespace PCAxis.Paxiom
             Dim sc As New StringCollection
             Dim sc2 As New StringCollection
 
-            If headingIndex < _model.Meta.Heading.Count - 1 Then
+            If headingIndex < Model.Meta.Heading.Count - 1 Then
                 'Call recursivly to get the combinations
                 sc2 = ConcatHeadingValues(headingIndex + 1)
-                For valueIndex As Integer = 0 To _model.Meta.Heading(headingIndex).Values.Count - 1
+                For valueIndex As Integer = 0 To Model.Meta.Heading(headingIndex).Values.Count - 1
                     For j As Integer = 0 To sc2.Count - 1
-                        sc.Add(_model.Meta.Heading(headingIndex).Values(valueIndex).Text & " " & sc2(j))
+                        sc.Add(Model.Meta.Heading(headingIndex).Values(valueIndex).Text & " " & sc2(j))
                     Next
                 Next
             Else
-                For valueIndex As Integer = 0 To _model.Meta.Heading(headingIndex).Values.Count - 1
-                    sc.Add(_model.Meta.Heading(headingIndex).Values(valueIndex).Text)
+                For valueIndex As Integer = 0 To Model.Meta.Heading(headingIndex).Values.Count - 1
+                    sc.Add(Model.Meta.Heading(headingIndex).Values(valueIndex).Text)
                 Next
             End If
 
@@ -179,11 +192,12 @@ Namespace PCAxis.Paxiom
         ''' </summary>
         ''' <param name="wr">The stream to write to</param>
         ''' <remarks></remarks>
-        Private Sub WriteTable(ByVal wr As System.IO.StreamWriter)
+        Protected Sub WriteTable(ByVal wr As System.IO.StreamWriter)
             'If _model.Meta.Stub.Count > 0 Then
             Dim sc As StringCollection
-            Dim df As DataFormatter = New DataFormatter(_model)
+            Dim df As DataFormatter = New DataFormatter(Model)
             Dim value As String = ""
+            Dim containsDataCellNotes As Boolean = Model.Meta.DataNoteCells.Count > 0
 
             df.DecimalSeparator = Me.DecimalSeparator.ToString
             df.ShowDataNotes = False
@@ -191,29 +205,63 @@ Namespace PCAxis.Paxiom
                 df.ThousandSeparator = ""
             End If
 
-            If _model.Meta.Stub.Count > 0 Then
+            If Model.Meta.Stub.Count > 0 Then
 
                 sc = ConcatStubValues(0)
 
                 'There should be exactly as many items in the stringcollection as 
                 'the number of rows in the data.
-                If sc.Count <> _model.Data.MatrixRowCount Then
+                If sc.Count <> Model.Data.MatrixRowCount Then
                     'TODO: Errorcode
                     Throw New PXSerializationException("Stubvalues does not match the data", "")
                 End If
 
                 For i As Integer = 0 To sc.Count - 1
                     wr.Write(sc(i))
-                    For c As Integer = 0 To _model.Data.MatrixColumnCount - 1
+                    For c As Integer = 0 To Model.Data.MatrixColumnCount - 1
                         value = df.ReadElement(i, c)
+
+                        If containsDataCellNotes Then
+                            If (df.DataNotePlacment = DataNotePlacementType.After) Then
+                                Dim lastDigit = value.Last()
+
+                                If Not Char.IsDigit(lastDigit) Then
+                                    value = value.Substring(0, value.Length - 1)
+                                End If
+                            ElseIf df.DataNotePlacment = DataNotePlacementType.Before Then
+                                Dim firstDigit = value.First()
+
+                                If Not Char.IsDigit(firstDigit) Then
+                                    value = value.Substring(1)
+                                End If
+                            End If
+                        End If
+
                         wr.Write(Me.Delimiter)
                         wr.Write(value)
                     Next
                     wr.WriteLine()
                 Next
-            ElseIf _model.Meta.Heading.Count > 0 Then
-                For c As Integer = 0 To _model.Data.MatrixColumnCount - 1
+            ElseIf Model.Meta.Heading.Count > 0 Then
+                For c As Integer = 0 To Model.Data.MatrixColumnCount - 1
                     value = df.ReadElement(0, c)
+
+                    If containsDataCellNotes Then
+                        If (df.DataNotePlacment = DataNotePlacementType.After) Then
+                            Dim lastDigit = value.Last()
+
+                            If Not Char.IsDigit(lastDigit) Then
+                                value = value.Substring(0, value.Length - 1)
+                            End If
+                        ElseIf df.DataNotePlacment = DataNotePlacementType.Before Then
+                            Dim firstDigit = value.First()
+
+                            If Not Char.IsDigit(firstDigit) Then
+                                value = value.Substring(1)
+                            End If
+                        End If
+                    End If
+
                     wr.Write(Me.Delimiter)
                     wr.Write(value)
                 Next
@@ -231,16 +279,16 @@ Namespace PCAxis.Paxiom
             Dim sc As New StringCollection
             Dim sc2 As New StringCollection
 
-            If stubIndex < _model.Meta.Stub.Count - 1 Then
+            If stubIndex < Model.Meta.Stub.Count - 1 Then
                 'Call recursivly to get the combinations
                 sc2 = ConcatStubValues(stubIndex + 1)
-                For valueIndex As Integer = 0 To _model.Meta.Stub(stubIndex).Values.Count - 1
+                For valueIndex As Integer = 0 To Model.Meta.Stub(stubIndex).Values.Count - 1
                     For j As Integer = 0 To sc2.Count - 1
                         sc.Add(TableStub(stubIndex, valueIndex) & Me.Delimiter & sc2(j))
                     Next
                 Next
             Else
-                For valueIndex As Integer = 0 To _model.Meta.Stub(stubIndex).Values.Count - 1
+                For valueIndex As Integer = 0 To Model.Meta.Stub(stubIndex).Values.Count - 1
                     sc.Add(TableStub(stubIndex, valueIndex))
                 Next
             End If
@@ -262,21 +310,26 @@ Namespace PCAxis.Paxiom
             Dim sb As New System.Text.StringBuilder
 
             If Me.DoubleColumn Then
-                If _model.Meta.Stub(stubIndex).DoubleColumn Then
-                    If _model.Meta.Stub(stubIndex).Values(valueIndex).HasCode Then
+                If Model.Meta.Stub(stubIndex).DoubleColumn Then
+                    If Model.Meta.Stub(stubIndex).Values(valueIndex).HasCode Then
                         If Me.WrapTextWithQuote Then sb.Append(ControlChars.Quote)
-                        sb.Append(_model.Meta.Stub(stubIndex).Values(valueIndex).Code)
+                        sb.Append(Model.Meta.Stub(stubIndex).Values(valueIndex).Code)
                         If Me.WrapTextWithQuote Then sb.Append(ControlChars.Quote)
                         sb.Append(Me.Delimiter)
                     End If
                 End If
             End If
             If Me.WrapTextWithQuote Then sb.Append(ControlChars.Quote)
-            sb.Append(_model.Meta.Stub(stubIndex).Values(valueIndex).Text)
+            If Not UseShortDescription Then
+                sb.Append(Model.Meta.Stub(stubIndex).Values(valueIndex).Text)
+            Else
+                sb.Append(Model.Meta.Stub(stubIndex).Values(valueIndex).Code)
+            End If
             If Me.WrapTextWithQuote Then sb.Append(ControlChars.Quote)
 
             Return sb.ToString
         End Function
+
 
 #Region "Public properties"
         Public Property Delimiter() As Char
@@ -331,6 +384,24 @@ Namespace PCAxis.Paxiom
             End Get
             Set(ByVal value As Boolean)
                 _wrapTextWithQuote = value
+            End Set
+        End Property
+
+        Protected Property UseShortDescription() As Boolean
+            Get
+                Return _useShortDescription
+            End Get
+            Set(ByVal value As Boolean)
+                _useShortDescription = value
+            End Set
+        End Property
+
+        Protected Property Model() As PXModel
+            Get
+                Return _model
+            End Get
+            Set(ByVal value As PXModel)
+                _model = value
             End Set
         End Property
 
