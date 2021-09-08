@@ -24,7 +24,10 @@
             Next
 
             pd.Add(New PCAxis.Paxiom.Operations.PivotDescription(timeVariable.First().Name, PCAxis.Paxiom.PlacementType.Stub))
-            pd.Add(New PCAxis.Paxiom.Operations.PivotDescription(contentVariable.First().Name, PCAxis.Paxiom.PlacementType.Stub))
+            'Some PX-File-models do not have a contentVariable
+            If Not contentVariable.Count = 0 Then
+                pd.Add(New PCAxis.Paxiom.Operations.PivotDescription(contentVariable.First().Name, PCAxis.Paxiom.PlacementType.Stub))
+            End If
 
             Dim pivot As New PCAxis.Paxiom.Operations.Pivot
 
