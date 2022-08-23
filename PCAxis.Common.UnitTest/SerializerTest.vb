@@ -12,7 +12,8 @@ Namespace PCAxis.Common.UnitTest
             Dim builder As PXFileBuilder = New PXFileBuilder()
 
             'builder.SetPath("C:\github.com\statisticssweden\nugets\PCAxis.Common\PCAxis.Common.UnitTest\PxFiles\officialstatistics.px")
-            builder.SetPath("C:\github.com\statisticssweden\nugets\PCAxis.Common\PCAxis.Common.UnitTest\PxFiles\PR0101B3.px")
+            Dim path As String = System.IO.Path.Combine(Environment.CurrentDirectory, "..\..\..\PxFiles\PR0101B3.px")
+            builder.SetPath(path)
 
             builder.BuildForSelection()
             Dim selections As Selection() = Selection.SelectAll(builder.Model.Meta)
