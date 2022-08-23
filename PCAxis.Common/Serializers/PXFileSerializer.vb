@@ -990,11 +990,11 @@ Namespace PCAxis.Paxiom
             For j As Integer = 0 To meta.Variables.Count - 1
                 var = meta.Variables(j)
 
-................'Added by Statistics Denmark - Support for variable codes in PX file - START'
-................writer.BeginPXLine(PXKeywords.VARIABLE_CODE, GetVariableName(var), lang)
-................writer.WriteValue(var.Code)
-................writer.EndPXLine()
-................'Added by Statistics Denmark - Support for variable codes in PX file - END'
+                'Added by Statistics Denmark - Support for variable codes in PX file - START'
+                writer.BeginPXLine(PXKeywords.VARIABLE_CODE, GetVariableName(var), lang)
+                writer.WriteValue(var.Code)
+                writer.EndPXLine()
+                'Added by Statistics Denmark - Support for variable codes in PX file - END'
 
                 writer.BeginPXLine(PXKeywords.VALUES, GetVariableName(var), lang)
 
